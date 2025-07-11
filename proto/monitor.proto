@@ -1,0 +1,116 @@
+syntax = "proto3";
+
+package monitor;
+
+option go_package = "./proto";
+
+// 监控服务
+service MonitorService {
+  // 获取恶意IP列表
+  rpc GetMaliciousIPs(GetMaliciousIPsRequest) returns (GetMaliciousIPsResponse);
+  
+  // 获取网络流量统计
+  rpc GetNetworkStats(GetNetworkStatsRequest) returns (GetNetworkStatsResponse);
+  
+  // 获取系统资源异常记录
+  rpc GetSystemAnomalies(GetSystemAnomaliesRequest) returns (GetSystemAnomaliesResponse);
+  
+  // 手动封禁IP
+  rpc BanIP(BanIPRequest) returns (BanIPResponse);
+  
+  // 解封IP
+  rpc UnbanIP(UnbanIPRequest) returns (UnbanIPResponse);
+  
+  // 获取实时监控状态
+  rpc GetMonitorStatus(GetMonitorStatusRequest) returns (GetMonitorStatusResponse);
+}
+
+// 请求消息
+message GetMaliciousIPsRequest {
+  int32 limit = 1;
+  int32 offset = 2;
+}
+
+message GetNetworkStatsRequest {
+  int64 start_time = 1;
+  int64 end_time = 2;
+}
+
+message GetSystemAnomaliesRequest {
+  int64 start_time = 1;
+  int64 end_time = 2;
+  string anomaly_type = 3; // cpu, memory, disk_io
+}
+
+message BanIPRequest {
+  string ip_address = 1;
+  int32 duration_minutes = 2;
+  string reason = 3;
+}
+
+message UnbanIPRequest {
+  string ip_address = 1;
+}
+
+message GetMonitorStatusRequest {}
+
+// 响应消息
+message GetMaliciousIPsResponse {
+  repeated MaliciousIP ips = 1;
+  int32 total_count = 2;
+}
+
+message GetNetworkStatsResponse {
+  repeated NetworkStat stats = 1;
+}
+
+message GetSystemAnomaliesResponse {
+  repeated SystemAnomaly anomalies = 1;
+}
+
+message BanIPResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message UnbanIPResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message GetMonitorStatusResponse {
+  bool is_running = 1;
+  int64 uptime_seconds = 2;
+  int32 active_connections = 3;
+  int32 banned_ips_count = 4;
+}
+
+// 数据结构
+message MaliciousIP {
+  string ip_address = 1;
+  int64 first_seen = 2;
+  int64 last_seen = 3;
+  int32 connection_count = 4;
+  string reason = 5;
+  bool is_banned = 6;
+  int64 ban_until = 7;
+}
+
+message NetworkStat {
+  string ip_address = 1;
+  int64 timestamp = 2;
+  int64 bytes_sent = 3;
+  int64 bytes_received = 4;
+  int32 connection_count = 5;
+  string requested_url = 6;
+}
+
+message SystemAnomaly {
+  int64 timestamp = 1;
+  string anomaly_type = 2; // cpu, memory, disk_io
+  double value = 3;
+  double threshold = 4;
+  string process_name = 5;
+  int32 process_id = 6;
+  string description = 7;
+}

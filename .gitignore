@@ -1,32 +1,91 @@
-# If you prefer the allow list template instead of the deny list, see community template:
-# https://github.com/github/gitignore/blob/main/community/Golang/Go.AllowList.gitignore
-#
 # Binaries for programs and plugins
 *.exe
 *.exe~
 *.dll
 *.so
 *.dylib
+ebpf-monitor
+client
 
 # Test binary, built with `go test -c`
 *.test
 
-# Code coverage profiles and other test artifacts
+# Output of the go coverage tool, specifically when used with LiteIDE
 *.out
-coverage.*
-*.coverprofile
-profile.cov
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
 # Go workspace file
 go.work
-go.work.sum
 
-# env file
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Project specific
+*.db
+*.sqlite
+*.sqlite3
+logs/
+*.log
+monitor.db
+
+# eBPF compiled objects
+*.o
+ebpf/*.o
+
+# Configuration files with secrets
+config.local.toml
+*.key
+*.crt
+*.pem
+
+# Build artifacts
+build/
+dist/
+
+# Test artifacts
+test-results/
+coverage.out
+coverage.html
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Docker
+.dockerignore
+
+# Scripts output
+scripts/logs/
+scripts/tmp/
+
+# Benchmark results
+benchmark-*.txt
+benchmark-*.json
+
+# Development files
 .env
+.env.local
+.env.development
+.env.test
+.env.production
 
-# Editor/IDE
-# .idea/
-# .vscode/
+# Generated protobuf files (if regenerated)
+# Uncomment if you want to regenerate them each time
+# *.pb.go
+# *_grpc.pb.go

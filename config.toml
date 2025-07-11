@@ -1,0 +1,110 @@
+[network]
+# 网络监控配置
+interface = "eth0"                    # 监控的网络接口
+max_connections_per_ip = 100          # 每个IP最大连接数
+connection_window_seconds = 60        # 连接统计时间窗口（秒）
+packet_capture_size = 1500            # 数据包捕获大小
+enable_deep_packet_inspection = true  # 启用深度包检测
+
+# 恶意URL检测
+malicious_urls = [
+    "/admin",
+    "/wp-admin",
+    "/phpmyadmin",
+    "/.env",
+    "/config.php",
+    "/shell.php",
+    "/webshell",
+    "/backdoor",
+    "/.git/config",
+    "/etc/passwd",
+    "/backup",
+    "/config"
+]
+
+# IP封禁配置
+[network.ban]
+default_duration_minutes = 60         # 默认封禁时长（分钟）
+max_duration_minutes = 1440           # 最大封禁时长（分钟）
+repeat_offender_multiplier = 2        # 重复违规者封禁时长倍数
+max_banned_ips = 10000                # 最大封禁IP数量
+auto_unban_enabled = true             # 自动解封启用
+whitelist_ips = [                     # IP白名单
+    "127.0.0.1",
+    "::1",
+    "10.0.0.0/8",
+    "172.16.0.0/12",
+    "192.168.0.0/16"
+]
+
+[system]
+# 系统资源监控配置
+monitor_interval_seconds = 30         # 监控间隔（秒）
+enable_process_monitoring = true      # 启用进程监控
+enable_network_monitoring = true      # 启用网络监控
+enable_disk_monitoring = true         # 启用磁盘监控
+
+# CPU监控阈值
+[system.cpu]
+warning_threshold = 80.0              # CPU使用率警告阈值（%）
+critical_threshold = 95.0             # CPU使用率严重阈值（%）
+check_duration_seconds = 300          # 检查持续时间（秒）
+
+# 内存监控阈值
+[system.memory]
+warning_threshold = 85.0              # 内存使用率警告阈值（%）
+critical_threshold = 95.0             # 内存使用率严重阈值（%）
+check_duration_seconds = 300          # 检查持续时间（秒）
+
+# 磁盘I/O监控阈值
+[system.disk]
+read_threshold_mbps = 100.0           # 磁盘读取阈值（MB/s）
+write_threshold_mbps = 100.0          # 磁盘写入阈值（MB/s）
+iops_threshold = 1000                 # IOPS阈值
+check_duration_seconds = 300          # 检查持续时间（秒）
+
+[grpc]
+# gRPC服务配置
+address = "127.0.0.1:50051"           # gRPC服务地址
+uds_socket_path = "/tmp/ebpf-monitor.sock"  # Unix域套接字路径
+enable_reflection = true              # 启用gRPC反射
+max_recv_msg_size = 4194304           # 最大接收消息大小（4MB）
+max_send_msg_size = 4194304           # 最大发送消息大小（4MB）
+connection_timeout_seconds = 30       # 连接超时时间（秒）
+
+[database]
+# 数据库配置
+path = "./monitor.db"                 # SQLite数据库路径
+max_connections = 10                  # 最大连接数
+connection_timeout_seconds = 30       # 连接超时时间（秒）
+query_timeout_seconds = 30            # 查询超时时间（秒）
+enable_wal_mode = true                # 启用WAL模式
+enable_foreign_keys = true           # 启用外键约束
+
+# 数据保留策略
+[database.retention]
+network_events_days = 30              # 网络事件保留天数
+system_anomalies_days = 30            # 系统异常保留天数
+malicious_ips_days = 90               # 恶意IP保留天数
+cleanup_interval_hours = 24           # 清理间隔（小时）
+auto_vacuum_enabled = true            # 自动清理启用
+
+[logging]
+# 日志配置
+level = "info"                        # 日志级别：debug, info, warn, error
+format = "json"                       # 日志格式：json, text
+output = "file"                       # 输出方式：file, stdout, stderr
+file_path = "./logs/monitor.log"      # 日志文件路径
+max_size_mb = 100                     # 单个日志文件最大大小（MB）
+max_backups = 10                      # 保留的日志文件数量
+max_age_days = 30                     # 日志文件保留天数
+compress = true                       # 压缩旧日志文件
+
+[ebpf]
+# eBPF程序配置
+program_path = "./ebpf/network_monitor.o"  # eBPF程序路径
+map_pin_path = "/sys/fs/bpf"          # BPF map固定路径
+enable_debug = false                  # 启用eBPF调试
+max_entries = 10000                   # map最大条目数
+batch_size = 100                      # 批处理大小
+poll_timeout_ms = 1000                # 轮询超时时间（毫秒）
