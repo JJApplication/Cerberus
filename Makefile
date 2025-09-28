@@ -93,6 +93,7 @@ ebpf:
 		$(GOGET) github.com/cilium/ebpf/cmd/bpf2go; \
 	fi
 	@echo "Generating eBPF Go bindings..."
+	export BPF_CLANG=clang
 	cd $(INTERNAL_DIR)/ebpf && $(GOCMD) generate
 
 # Install system dependencies (Ubuntu/Debian)

@@ -16,7 +16,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-//go:generate go run github.com/cilium/ebpf/cmd/bpf2go -cc clang -cflags "-O2 -g -Wall -Werror" NetworkMonitor ../../../ebpf/network_monitor.c
+//go:generate go run github.com/cilium/ebpf/cmd/bpf2go -cc clang NetworkMonitor ../../ebpf/network_monitor.c
 
 type NetworkEvent struct {
 	SrcIP     net.IP
@@ -30,19 +30,19 @@ type NetworkEvent struct {
 }
 
 type SystemEvent struct {
-	PID        uint32
-	CPUUsage   uint32
+	PID         uint32
+	CPUUsage    uint32
 	MemoryUsage uint64
-	DiskIO     uint64
-	Timestamp  time.Time
-	Comm       string
+	DiskIO      uint64
+	Timestamp   time.Time
+	Comm        string
 }
 
 type IPStats struct {
 	ConnectionCount uint32
-	BytesSent      uint64
-	BytesReceived  uint64
-	LastSeen       time.Time
+	BytesSent       uint64
+	BytesReceived   uint64
+	LastSeen        time.Time
 }
 
 type Monitor struct {
@@ -311,9 +311,9 @@ func (m *Monitor) GetIPStats(ip net.IP) (*IPStats, error) {
 	ipUint32 := binary.BigEndian.Uint32(ipv4)
 	var stats struct {
 		ConnectionCount uint32
-		BytesSent      uint64
-		BytesReceived  uint64
-		LastSeen       uint64
+		BytesSent       uint64
+		BytesReceived   uint64
+		LastSeen        uint64
 	}
 
 	err := m.objs.IpStatsMap.Lookup(unsafe.Pointer(&ipUint32), unsafe.Pointer(&stats))
@@ -323,9 +323,9 @@ func (m *Monitor) GetIPStats(ip net.IP) (*IPStats, error) {
 
 	return &IPStats{
 		ConnectionCount: stats.ConnectionCount,
-		BytesSent:      stats.BytesSent,
-		BytesReceived:  stats.BytesReceived,
-		LastSeen:       time.Unix(0, int64(stats.LastSeen)),
+		BytesSent:       stats.BytesSent,
+		BytesReceived:   stats.BytesReceived,
+		LastSeen:        time.Unix(0, int64(stats.LastSeen)),
 	}, nil
 }
 
